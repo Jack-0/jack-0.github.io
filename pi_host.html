@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="generator" content="Hugo 0.82.0">
+    <title>JACK7E</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/cover/">
+
+    
+
+    <!-- Bootstrap core CSS -->
+<link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="assets/dist/css/cover.css" rel="stylesheet">
+  </head>
+  <body class="d-flex h-100 text-center text-white bg-dark">
+    
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  <header class="mb-auto">
+    <div>
+      <h3 class="float-md-start mb-0">JACK7E.xyz</h3>
+      <nav class="nav nav-masthead justify-content-center float-md-end">
+        <a class="nav-link" aria-current="page" href="index.html">Home</a>
+        <a class="nav-link" href="projects.html">Projects</a>
+        <a class="nav-link active" href="guides.html">Guides</a>
+      </nav>
+    </div>
+  </header>
+
+
+
+  <main class="px-3" style="text-align: left;">
+    <br>
+    <br>
+    <h1>Raspberry pi web hosting</h1>
+      <br>
+      <p>
+        Ever wanted to host your own website without being at the mercy of Jeff! 
+        If so this guide should help you setup a <a style="color: violet;">https</a> enabled website. 
+        <br>
+      </p>
+      <br>
+      <h3>What you need</h3>
+      <br>
+      <p>
+        To host on your pi you going to need a couple things:
+        <br>
+        <br>
+        1. Domain name such as <a href="https://www.jack7e.xyz/" style="text-decoration: none; color: wheat;">www.Jack7E.xyz</a>
+        <br>
+        2. Static IP address
+        <br>
+        3. Basic linux knowledge
+        <br>
+        <br>
+        If you have these already skip to the "Domain configuration" section further down the page.
+      </p>
+
+      <br>
+      <h3>Getting a domain</h3>
+      <p>
+        I highly recommend using <a href="https://www.epik.com/?affid=tu0we7zu0" style="text-decoration: none; color: wheat;">Epik</a> to purchase a domain.
+        They have great reviews, good customer support and you can buy your domain name with crypto currency! 
+        This guide will also use use <a href="https://www.epik.com/?affid=tu0we7zu0" style="text-decoration: none; color: wheat;">Epik</a> 
+        but it should be easy to apply the steps to other domain name registers.
+      </p>      
+
+      <br>
+      <h3>Getting a global static IP</h3>
+      <p>        
+        This is the step that will be highly variable depending on your Internet Service Provider (ISP). 
+        If you don't know how to do this unfortunately the best advise is do an internet search of 
+        <a style="color: violet;">"_ISP_NAME_ get static IP"</a>
+        . 
+        In my case I had to log into my ISP's account find addons and add the static IP package.
+      </p>
+
+      <br>
+      <h3>Domain configuration</h3>
+      <p>
+        1. Purchase a domain name with <a href="https://www.epik.com/?affid=tu0we7zu0" style="text-decoration: none; color: wheat;">Epik</a>  
+        or your domain register of choice.
+        <br>
+        <br>
+        2. Click the hamburger button highlighted by the red box below.
+        <img src="assets/images/guides/pi_guide/epik_1.png" style="width: 100%">
+        <br>
+        <br>
+        3. Click set dns and host records
+        <img src="assets/images/guides/pi_guide/epik_2.png" style="width: 100%">
+        <br>
+        <br>
+        4. Navigate to external hosts and then click add record.
+        <br> 
+        Enter your <a style="color:violet">static ip address</a> (this should not be 192.168.0.1). 
+        This step is to ensure traffic to your site (www.site_name.xyz) is redirected to your static IP. 
+        Then later your website once a web server is setup to check for requests on port 80.
+
+        <img src="assets/images/guides/pi_guide/epik_3.png" style="width: 100%">
+        <br>
+        <br>
+        5. Navigate to CAA records and click add record. It should look something like the following image once done.
+        This step is so that we can generate a ssl certificate and enable <a style="color:violet">https</a>. 
+        <img src="assets/images/guides/pi_guide/epik_4.png" style="width: 100%">
+        <br>
+        <br>
+
+      </p>
+      
+      <br>
+      <br>
+      <h3>Pi setup</h3>
+      <p>
+        Here I assume you already have an operating system on your pi.
+        <br>
+        <br>
+        1. Open up a terminal and run <br>
+      <p style="margin-left: 20px;">
+        <code style="color: violet;">sudo ifconfig  | grep inet | grep broadcast</code>
+        <br>
+        <br>
+        You should get the following output
+        <br>
+        <br>
+        <output>inet <a style="color:turquoise">192.168.1.XX</a> netmask 255.255.255.0  broadcast <a style="color:turquoise">192.168.1.YYY</a></output>
+        <br>
+        <br>
+        Remember the two <a style="color:turquoise">turquoise</a> numbers you will need to add them to a file in the next step.
+      </p>
+        2. Next we need to edit the file <a style="color:wheat">/etc/dhcpcd.conf</a>. 
+        I run the command:
+      <p style="margin-left: 20px;">
+        <code style="color: violet;">sudo vim /etc/dhcpcd.conf</code>
+        <br>
+      </p>
+        If you are not familiar with the vim text editor replace vim with nano or geddit. You may need to run sudo apt-get install nano. 
+        <br>
+        <br>
+        Once in a text editor find the example ip configuration and uncomment as shown, if there is no example add the uncommented lines
+        <pre>      
+          <code>
+            # Example static IP configuration:
+            #interface eth0
+            <a style="color: violet;">static ip_address</a>=<a style="color:turquoise">192.168.1.XX</a>
+            <a style="color: violet;">static routers</a>=<a style="color:turquoise">192.168.1.YYY</a>
+            <a style="color: violet;">static domain_name_servers</a>=1.1.1.1 
+          </code>
+        </pre>
+        What we have just done is set a local static ip address (different from the ISP global static IP address) 
+        to ensure the ip address doesn't change causing port forwarding issues later on. Then set the gate way to the known gateway. 
+        Finally we set our dns to 1.1.1.1 which is a google domain name server. You may use a different one if you please.
+        <br>
+        <br>
+        3. Restart the dns by running the following 3 commands separately. 
+        <pre >      
+          <code style="color: violet;">
+            sudo systemctl daemon-reload
+            sudo systemctl restart systemd-resolved.service\n
+            sudo systemctl restart dhcpcd.service
+          </code>
+        </pre>
+        <br>
+        <br>
+        4. run the next command separately to update, install openssl (for https) and install the apache webserver. 
+        <pre >      
+          <code style="color: violet;">
+            sudo apt update
+            sudo apt-get install openssl
+            sudo apt install apache2 -y
+          </code>
+        </pre>
+        <br>
+        <br>
+        5. You should now have a file at <a style="color: wheat;">/var/www/html/index.html</a> all your website html and css
+        should be placed inside this directory. Editing the file index.html will edit your website (You can type your pi's ip address in a browser to confirm this). But we still have a few more step to 
+        ensure the website can be reached via your domain name. 
+        <br>
+        <br>
+        6. This step is to enable <a style="color: violet;">https</a> simply run the following commands and enter your email address
+        when prompted. 
+        <pre >      
+          <code style="color: violet;">
+            sudo apt-get install python-certbot-apache
+            sudo certbot --apache
+          </code>
+        </pre>
+      </p>
+
+      <br>
+      <h3>Port forwarding the pi</h3>
+      This last step requires you to login to your router. Unfortunately this varies from device to device so I will give a high level overview. 
+      <br>
+      <br>
+      1. Find your router's ip address this information is sometimes on the router or easily found via an internet search such as "router_brand how to find ip"
+      <br>
+      <br>
+      2. Find the port forwarding setting this is usually in <a style="color: wheat;">advance settings > firewall > port forwarding</a>
+      <br>
+      <br>
+      3. Now you need to apply the the setting so that the ip address of the pi has the http and https ports enabled. 
+      If your router settings are confusing it should look something as follows:
+      <br>
+      pi_ip_address 80 
+      <br>
+      pi_ip_address 443
+
+      <br>
+      <br>
+      <h3>Setup complete</h3> 
+      Awesome you should now be able to view your website by entering your domain name in a browser. 
+      Make sure you remember to edit <a style="color: wheat;">/var/www/html/index.html</a> on your pi to update your site!
+      <br>
+      <br>
+      I like to create the site in a different file and link it to <a style="color: wheat;">/var/www/html/index.html</a> via a symbolic link. 
+      For example the website code is stored in <a style="color: wheat;">/home/pi/dev/mysite</a> and you can run:
+      <br>
+      <br>
+      <code style="color: violet;">sudo ln -s /home/pi/dev/mysite/* /var/www/html</code>
+      <br>
+      <br>
+      Any changes to files in <a style="color: wheat;">/home/pi/dev/mysite</a> reflect changes in <a style="color: wheat;">/var/www/html/index.html</a>. 
+      However, remember to run the command again if you add a new file.
+
+
+
+      <br>
+      <br>
+  </main>
+
+  <footer class="mt-auto text-white-50">
+    <p>Hosted on my raspberry pi
+        <img src="assets/images/pi.png" alt="" width="10%">
+        </p>
+    </footer>
+  </footer>
+</div>
+
+
+    
+  </body>
+</html>
