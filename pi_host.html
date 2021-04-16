@@ -80,7 +80,7 @@
         3. Basic linux knowledge
         <br>
         <br>
-        If you have these already skip to the "Domain configuration" section further down the page.
+        If you have these already skip to the "Getting a global static ip" section further down the page.
       </p>
 
       <br>
@@ -143,12 +143,12 @@
         Here I assume you already have an operating system on your pi.
         <br>
         <br>
-        1. Open up a terminal and run <br>
+        1. Open up a terminal and run the following command to find your devices local ip and broadcast addresses<br>
       <p style="margin-left: 20px;">
         <code style="color: violet;">sudo ifconfig  | grep inet | grep broadcast</code>
         <br>
         <br>
-        You should get the following output
+        You should get the following output 
         <br>
         <br>
         <output>inet <a style="color:turquoise">192.168.1.XX</a> netmask 255.255.255.0  broadcast <a style="color:turquoise">192.168.1.YYY</a></output>
@@ -158,9 +158,9 @@
       </p>
         2. Next we need to edit the file <a style="color:wheat">/etc/dhcpcd.conf</a>. 
         I run the command:
-      <p style="margin-left: 20px;">
-        <code style="color: violet;">sudo vim /etc/dhcpcd.conf</code>
-        <br>
+        <pre>      
+          <code style="color: violet;">sudo vim /etc/dhcpcd.conf</code>
+        </pre>      
       </p>
         If you are not familiar with the vim text editor replace vim with nano or geddit. You may need to run sudo apt-get install nano. 
         <br>
@@ -249,6 +249,15 @@
       <br>
       Any changes to files in <a style="color: wheat;">/home/pi/dev/mysite</a> reflect changes in <a style="color: wheat;">/var/www/html/index.html</a>. 
       However, remember to run the command again if you add a new file.
+
+      <br>
+      <br>
+      <h3>Further reading</h3> 
+      I would highly recommend reading the <a href="https://www.raspberrypi.org/documentation/configuration/security.md" style="color: wheat;">pi security guide</a> 
+      and following the actions taken especially take note of the install a firewall section (as you can't trust your routers firewall) and the fail2ban section if you
+      have enabled ssh on your device. 
+
+      
 
 
 
