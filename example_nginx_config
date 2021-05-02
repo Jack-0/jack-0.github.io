@@ -1,0 +1,57 @@
+server {
+	# where to find all files
+	root /var/www/jack7e.xyz;
+	
+	# name of the index page
+	index index.html;
+	
+	# server names
+	server_name jack7e.xyz www.jack7e.xyz;
+	
+	# locate files
+	location / {
+		try_files $uri $uri/ =404;
+	}
+
+	# functionality config - - - - - -
+
+	# Strip "index.html" (for canonicalization)
+	if ( $request_uri ~ "/index.html" ) {
+	    rewrite ^(.*)/ $1/ permanent;
+	}
+	
+	# error page location
+	error_page 404 /404.html;
+
+
+	# end functionality config - - - -
+
+
+	# RUN CERTBOT FIRST TO GET THIS SETUP
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+	# note _location_ is diffent for each setup... CERTBOT MANAGES THIS
+    ssl_certificate /etc/letsencrypt/live/_location_/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/_location_/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+}
+
+
+server {
+    if ($host = www.jack7e.xyz) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = jack7e.xyz) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+	listen 80;
+	listen [::]:80;
+
+	server_name jack7e.xyz www.jack7e.xyz;
+    return 404; # managed by Certbot
+}
